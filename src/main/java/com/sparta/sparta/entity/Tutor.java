@@ -26,7 +26,7 @@ public class Tutor {
     private String company;
 
     @Column(nullable = false)
-    private Long phoneNumber;
+    private String phoneNumber;
 
     @Column(nullable = false)
     private String bio;

@@ -1,7 +1,6 @@
 package com.sparta.sparta.entity;
 
 import com.sparta.sparta.dto.LectureRequestDto;
-import com.sparta.sparta.dto.TutorRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,14 +28,18 @@ public class Lecture extends Timestamped{
     @Enumerated(EnumType.STRING)
     private LectureEnum category;
 
-    @Column(nullable = false)
-    private String tutorName;
+//    @Column(nullable = false)
+//    private String tutorName;
+
+    @ManyToOne
+    @JoinColumn(name = "tutor_id") // 데이터베이스의 외래키 컬럼 지정
+    private Tutor tutor;
 
     public Lecture(LectureRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.price = requestDto.getPrice();
         this.description = requestDto.getDescription();
         this.category = requestDto.getCategory();
-        this.tutorName = requestDto.getTutorName();
+        this.tutor = tutor; // Tutor 객체 설정
     }
 }

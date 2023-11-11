@@ -8,10 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,5 +25,12 @@ public class LectureController {
     public ResponseEntity<LectureResponseDto> registerLecture(@Valid @RequestBody LectureRequestDto requestDto) {
         LectureResponseDto responseDto = lectureService.registerLecture(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
+
+    // 강의 조회
+    @GetMapping("/user/lecture/{lectureId}")
+    public ResponseEntity<Map<String, Object>> getLecture(@PathVariable Long lectureId) {
+        Map<String, Object> lectureDetails = lectureService.getLectureDetails(lectureId);
+        return ResponseEntity.ok(lectureDetails);
     }
 }

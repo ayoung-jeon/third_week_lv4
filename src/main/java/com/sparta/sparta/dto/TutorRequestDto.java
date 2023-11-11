@@ -18,8 +18,8 @@ public class TutorRequestDto {
     @NotBlank
     private String company;
 
-    @NotNull
-    private Long phoneNumber;
+    @NotBlank
+    private String phoneNumber;
 
     @NotBlank
     private String bio;

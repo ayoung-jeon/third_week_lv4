@@ -23,6 +23,8 @@ public class LectureRequestDto {
     @NonNull
     private LectureEnum category;
 
-    @NotBlank
-    private String tutorName;
+//    @NotBlank
+//    private String tutorName;
+
+    private Long tutorId;
 }

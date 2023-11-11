@@ -4,13 +4,18 @@ import com.sparta.sparta.dto.LectureRequestDto;
 import com.sparta.sparta.dto.LectureResponseDto;
 import com.sparta.sparta.entity.Lecture;
 import com.sparta.sparta.entity.LectureEnum;
+import com.sparta.sparta.entity.Tutor;
 import com.sparta.sparta.repository.LectureRepository;
+import com.sparta.sparta.repository.TutorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +23,8 @@ import java.util.EnumSet;
 public class LectureService {
 
     private final LectureRepository lectureRepository;
+    private final TutorRepository tutorRepository;
+
 
     public LectureResponseDto registerLecture(LectureRequestDto requestDto) {
         // 로그 남기기
@@ -36,8 +43,19 @@ public class LectureService {
             throw new IllegalArgumentException("Invalid category: " + requestDto.getCategory());
         }
 
+        // Tutor 조회
+        Tutor tutor = tutorRepository.findById(requestDto.getTutorId())
+                .orElseThrow(() -> new EntityNotFoundException("Tutor not found"));
+
         // Lecture 엔티티 생성
-        Lecture lecture = new Lecture(requestDto);
+        Lecture lecture = new Lecture();
+        lecture.setTitle(requestDto.getTitle());
+        lecture.setPrice(requestDto.getPrice());
+        lecture.setDescription(requestDto.getDescription());
+        lecture.setCategory(requestDto.getCategory());
+        lecture.setTutor(tutor); // 여기에서 Tutor 설정
+
+        // 강의 저장
         Lecture savedLecture;
 
         // 저장 시도
@@ -54,5 +72,30 @@ public class LectureService {
 
         // LectureResponseDto 생성 및 반환
         return new LectureResponseDto(savedLecture);
+    }
+
+    // 강의 조회
+    public Map<String, Object> getLectureDetails(Long lectureId) {
+        Lecture lecture = lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new EntityNotFoundException("Lecture not found"));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("lectureId", lecture.getLectureId());
+        response.put("title", lecture.getTitle());
+        response.put("price", lecture.getPrice());
+        response.put("description", lecture.getDescription());
+        response.put("category", lecture.getCategory());
+
+        Tutor tutor = lecture.getTutor();
+        if (tutor != null) {
+            Map<String, Object> tutorDetails = new HashMap<>();
+            tutorDetails.put("tutorName", tutor.getTutorName());
+            tutorDetails.put("experienceYears", tutor.getExperienceYears());
+            tutorDetails.put("company", tutor.getCompany());
+            // 전화번호는 제외
+            response.put("tutor", tutorDetails);
+        }
+
+        return response;
     }
 }

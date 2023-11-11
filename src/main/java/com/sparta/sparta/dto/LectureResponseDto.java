@@ -15,7 +15,7 @@ public class LectureResponseDto {
     private Long price;
     private String description;
     private LectureEnum category;
-    private String tutorName;
+//    private String tutorName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -25,7 +25,7 @@ public class LectureResponseDto {
         this.price = lecture.getPrice();
         this.description = lecture.getDescription();
         this.category = lecture.getCategory();
-        this.tutorName = lecture.getTutorName();
+//        this.tutorName = lecture.getTutorName();
         this.createdAt = lecture.getCreatedAt();
         this.modifiedAt = lecture.getModifiedAt();
     }

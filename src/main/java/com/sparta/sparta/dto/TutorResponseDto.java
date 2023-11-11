@@ -11,7 +11,7 @@ public class TutorResponseDto {
     private String tutorName;
     private Long experienceYears;
     private String company;
-    private Long phoneNumber;
+    private String phoneNumber;
     private String bio;
 
     public TutorResponseDto(Tutor tutor) {
