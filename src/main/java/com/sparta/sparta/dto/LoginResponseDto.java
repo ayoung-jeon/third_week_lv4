@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class LoginResponseDto {
 
-    private Long id;
+    private Long userid;
     private String username;
     private String email;
     private String gender;
@@ -18,7 +18,7 @@ public class LoginResponseDto {
     private UserRoleEnum role;
 
     public LoginResponseDto(User user, String accessToken) {
-        this.id = user.getId();
+        this.userid = user.getUserid();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.gender = user.getGender();
