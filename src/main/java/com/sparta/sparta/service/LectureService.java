@@ -12,10 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -97,5 +97,38 @@ public class LectureService {
         }
 
         return response;
+    }
+
+    // 카테고리별 강의 조회
+    @Transactional(readOnly = true)
+    public List<LectureResponseDto> getLecturesByCategory(LectureEnum category, String sort, String order) {
+        List<Lecture> lectures = new ArrayList<>(); // 변수 초기화
+
+        // 정렬 기준에 따라 적절한 리포지토리 메서드 호출
+        switch (sort) {
+            case "title":
+                lectures = order.equals("asc") ?
+                        lectureRepository.findByCategoryOrderByTitleAsc(category) :
+                        lectureRepository.findByCategoryOrderByTitleDesc(category);
+                break;
+            case "price":
+                lectures = order.equals("asc") ?
+                        lectureRepository.findByCategoryOrderByPriceAsc(category) :
+                        lectureRepository.findByCategoryOrderByPriceDesc(category);
+                break;
+            case "createdAt":
+                lectures = order.equals("asc") ?
+                        lectureRepository.findByCategoryOrderByCreatedAtAsc(category) :
+                        lectureRepository.findByCategoryOrderByCreatedAtDesc(category);
+                break;
+            default:
+                // 기본 정렬 방식 정의
+                lectures = lectureRepository.findByCategoryOrderByTitleAsc(category);
+        }
+
+        // DTO 변환 로직
+        return lectures.stream()
+                .map(LectureResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
