@@ -2,6 +2,7 @@ package com.sparta.sparta.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.sparta.dto.LoginRequestDto;
+import com.sparta.sparta.dto.LoginResponseDto;
 import com.sparta.sparta.entity.UserRoleEnum;
 import com.sparta.sparta.jwt.JwtUtil;
 import com.sparta.sparta.security.UserDetailsImpl;
@@ -51,15 +52,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult)throws IOException {
 
-        String email = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+        // 로그인 성공 메세지 대신 회원 가입한 회원 정보 반환 하기 위해 수정
+//        String email = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+//        UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+//
+//        String accessToken = jwtUtil.createAccessToken(email,role);
 
-        String accessToken = jwtUtil.createAccessToken(email,role);
+        UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
+        String accessToken = jwtUtil.createAccessToken(userDetails.getUsername(), userDetails.getUser().getRole());
 
         jwtUtil.addJwtToHeader(JwtUtil.ACCESSTOKEN_HEADER,accessToken,response);
 
+        LoginResponseDto loginResponseDto = new LoginResponseDto(userDetails.getUser(), accessToken);
+
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString(new SimpleResponse("로그인 성공")));
+        response.getWriter().write(objectMapper.writeValueAsString(loginResponseDto));
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
