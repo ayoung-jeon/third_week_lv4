@@ -3,7 +3,6 @@ package com.sparta.sparta.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.sparta.dto.LoginRequestDto;
 import com.sparta.sparta.dto.LoginResponseDto;
-import com.sparta.sparta.entity.UserRoleEnum;
 import com.sparta.sparta.jwt.JwtUtil;
 import com.sparta.sparta.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
