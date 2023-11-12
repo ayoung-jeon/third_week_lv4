@@ -31,6 +31,11 @@ public class UserDetailsImpl implements UserDetails {
         return user.getEmail();
     }
 
+    // 사용자의 고유 ID를 반환하는 메서드 추가
+    public Long getUserId() {
+        return user.getUserid();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         UserRoleEnum role = user.getRole();
