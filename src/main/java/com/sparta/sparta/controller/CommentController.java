@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,5 +37,28 @@ public class CommentController {
     public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable Long lectureId) {
         List<CommentResponseDto> comments = commentService.getCommentsByLecture(lectureId);
         return ResponseEntity.ok(comments);
+    }
+
+    // 댓글 수정
+    @PutMapping("/lectures/{lectureId}/comments/{commentId}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long commentId,
+                                                            @RequestBody CommentRequestDto requestDto,
+                                                            Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long userId = userDetails.getUserId();
+        CommentResponseDto commentResponseDto = commentService.updateComment(commentId, userId, requestDto.getContent());
+        return ResponseEntity.ok(commentResponseDto);
+    }
+
+    // 댓글 삭제
+    @DeleteMapping("/lectures/{lectureId}/comments/{commentId}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId,
+                                              Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long userId = userDetails.getUserId();
+        commentService.deleteComment(commentId, userId);
+        return ResponseEntity.noContent().build();
     }
 }

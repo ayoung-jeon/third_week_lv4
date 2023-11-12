@@ -33,7 +33,7 @@ public class UserDetailsImpl implements UserDetails {
 
     // 사용자의 고유 ID를 반환하는 메서드 추가
     public Long getUserId() {
-        return user.getUserid();
+        return user.getUserId();
     }
 
     @Override

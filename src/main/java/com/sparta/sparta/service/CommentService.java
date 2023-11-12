@@ -10,6 +10,7 @@ import com.sparta.sparta.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,5 +51,31 @@ public class CommentService {
         return comments.stream()
                 .map(CommentResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    // 댓글 수정 (UserId 비교해서 찾는 코드도 있어야 함)
+    public CommentResponseDto updateComment(Long commentId, Long userId, String newContent) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+
+        if (!comment.getUser().getUserId().equals(userId)) {
+            throw new AccessDeniedException("User not authorized to update this comment");
+        }
+
+        comment.setContent(newContent);
+        Comment updatedComment = commentRepository.save(comment);
+        return new CommentResponseDto(updatedComment);
+    }
+
+    // 댓글 삭제 (UserId 비교해서 찾는 코드도 있어야 함)
+    public void deleteComment(Long commentId, Long userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+
+        if (!comment.getUser().getUserId().equals(userId)) {
+            throw new AccessDeniedException("User not authorized to delete this comment");
+        }
+
+        commentRepository.delete(comment);
     }
 }
