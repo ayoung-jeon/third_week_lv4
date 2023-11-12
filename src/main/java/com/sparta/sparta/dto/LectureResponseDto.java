@@ -15,7 +15,7 @@ public class LectureResponseDto {
     private Long price;
     private String description;
     private LectureEnum category;
-//    private String tutorName;
+    private Long likeCount; // 좋아요 수 필드 추가
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -25,8 +25,19 @@ public class LectureResponseDto {
         this.price = lecture.getPrice();
         this.description = lecture.getDescription();
         this.category = lecture.getCategory();
-//        this.tutorName = lecture.getTutorName();
         this.createdAt = lecture.getCreatedAt();
         this.modifiedAt = lecture.getModifiedAt();
+    }
+
+    // 좋아요 수를 포함하는 새로운 생성자 추가 (오버로딩 된 생성자)
+    public LectureResponseDto(Lecture lecture, Long likeCount) {
+        this.lectureId = lecture.getLectureId();
+        this.title = lecture.getTitle();
+        this.price = lecture.getPrice();
+        this.description = lecture.getDescription();
+        this.category = lecture.getCategory();
+        this.createdAt = lecture.getCreatedAt();
+        this.modifiedAt = lecture.getModifiedAt();
+        this.likeCount = likeCount; // 좋아요 수 설정
     }
 }

@@ -5,6 +5,7 @@ import com.sparta.sparta.dto.LectureResponseDto;
 import com.sparta.sparta.entity.Lecture;
 import com.sparta.sparta.entity.LectureEnum;
 import com.sparta.sparta.entity.Tutor;
+import com.sparta.sparta.repository.LectureLikeRepository;
 import com.sparta.sparta.repository.LectureRepository;
 import com.sparta.sparta.repository.TutorRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,6 +25,7 @@ public class LectureService {
 
     private final LectureRepository lectureRepository;
     private final TutorRepository tutorRepository;
+    private final LectureLikeRepository lectureLikeRepository; // 좋아요 기능 때문에 추가
 
 
     public LectureResponseDto registerLecture(LectureRequestDto requestDto) {
@@ -79,6 +81,9 @@ public class LectureService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException("Lecture not found"));
 
+        // 좋아요 수를 가져옴
+        Long likeCount = lectureLikeRepository.countByLecture(lecture);
+
         Map<String, Object> response = new HashMap<>();
         response.put("lectureId", lecture.getLectureId());
         response.put("title", lecture.getTitle());
@@ -94,6 +99,8 @@ public class LectureService {
             tutorDetails.put("company", tutor.getCompany());
             // 전화번호는 제외
             response.put("tutor", tutorDetails);
+
+            response.put("likeCount", likeCount); // 좋아요 수 추가
         }
 
         return response;
@@ -128,7 +135,17 @@ public class LectureService {
 
         // DTO 변환 로직
         return lectures.stream()
-                .map(LectureResponseDto::new)
+                .map(lecture -> {
+                    Long likeCount = lectureLikeRepository.countByLecture(lecture);
+                    return new LectureResponseDto(lecture, likeCount);
+                })
                 .collect(Collectors.toList());
+    }
+
+    // 강의 조회시 좋아요 기능 추가
+    public Long getLikeCount(Long lectureId) {
+        Lecture lecture = lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new EntityNotFoundException("Lecture not found"));
+        return lectureLikeRepository.countByLecture(lecture);
     }
 }
